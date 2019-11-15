@@ -1,6 +1,8 @@
 package com.innogames.tdd_example.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +16,9 @@ public class TimeController {
       path = "/api/time"
   )
   ResponseEntity getTime() {
-    return new ResponseEntity(HttpStatus.OK);
+    HttpHeaders responseHeaders = new HttpHeaders();
+    responseHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    return new ResponseEntity(responseHeaders, HttpStatus.OK);
   }
 
 }
