@@ -1,5 +1,7 @@
 package com.innogames.tdd_example.controller;
 
+import com.innogames.tdd_example.data.response.TimeResponse;
+import java.time.LocalDateTime;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,12 +15,14 @@ public class TimeController {
 
   @RequestMapping(
       method = RequestMethod.GET,
-      path = "/api/time"
+      path = "/api/time",
+      produces = MediaType.APPLICATION_JSON_VALUE
   )
-  ResponseEntity getTime() {
+  ResponseEntity<TimeResponse> getTime() {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-    return new ResponseEntity(responseHeaders, HttpStatus.OK);
+    final TimeResponse timeResponse = new TimeResponse(LocalDateTime.now());
+    return new ResponseEntity<>(timeResponse, responseHeaders, HttpStatus.OK);
   }
 
 }
