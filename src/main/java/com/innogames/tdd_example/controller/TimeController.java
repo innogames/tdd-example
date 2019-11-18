@@ -1,6 +1,8 @@
 package com.innogames.tdd_example.controller;
 
 import com.innogames.tdd_example.data.response.TimeResponse;
+import com.innogames.tdd_example.data.response.TimeResponseV100;
+import com.innogames.tdd_example.data.response.TimeResponseV110;
 import java.time.LocalDateTime;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,8 +29,13 @@ public class TimeController {
     final HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.add(API_VERSION_HEADER, apiVersion);
     responseHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-    final TimeResponse timeResponse = new TimeResponse(LocalDateTime.now());
+    final TimeResponse timeResponse;
+    if (apiVersion.equals("1.0.0")) {
+      timeResponse = new TimeResponseV100(LocalDateTime.now());
+    } else {
+      timeResponse = new TimeResponseV110(LocalDateTime.now());
+    }
+
     return new ResponseEntity<>(timeResponse, responseHeaders, HttpStatus.OK);
   }
-
 }
