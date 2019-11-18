@@ -23,21 +23,34 @@ import org.springframework.test.web.servlet.ResultActions;
 @AutoConfigureMockMvc
 class TimeControllerTest {
 
+  private static final String API_VERSION_HEADER = "X-API-VERSION";
+
   @Autowired
   private MockMvc mockMvc;
 
   @Test
-  void getTime_success() throws Exception {
+  void getTime_successV100() throws Exception {
+    getTime_success("1.0.0", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+  }
+
+  @Test
+  void getTime_successV110() throws Exception {
+    getTime_success("1.1.0", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+  }
+
+  void getTime_success(final String apiVersion, final DateTimeFormatter expectedFormatter)
+      throws Exception {
     final LocalDateTime testStartTime = LocalDateTime.now();
-    final DateTimeFormatter expectedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     final ResultActions resultActions = mockMvc.perform(
         get("/api/time")
+            .header(API_VERSION_HEADER, apiVersion)
     );
 
     resultActions
         .andExpect(status().isOk())
         .andExpect(header().string("Content-Type", "application/json"))
+        .andExpect(header().string(API_VERSION_HEADER, apiVersion))
         .andExpect(jsonPath("$.time").exists())
         .andExpect(jsonPath("$.*", hasSize(1)));
 
