@@ -1,9 +1,7 @@
 package com.innogames.tdd_example.controller;
 
 import com.innogames.tdd_example.data.response.TimeResponse;
-import com.innogames.tdd_example.data.response.TimeResponseV100;
-import com.innogames.tdd_example.data.response.TimeResponseV110;
-import java.time.LocalDateTime;
+import com.innogames.tdd_example.service.response.TimeResponseBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +16,13 @@ public class TimeController {
 
   private static final String API_VERSION_HEADER = "X-API-VERSION";
 
+  private final TimeResponseBuilder timeResponseBuilder;
+
+  public TimeController(
+      TimeResponseBuilder timeResponseBuilder) {
+    this.timeResponseBuilder = timeResponseBuilder;
+  }
+
   @RequestMapping(
       method = RequestMethod.GET,
       path = "/api/time",
@@ -29,13 +34,7 @@ public class TimeController {
     final HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.add(API_VERSION_HEADER, apiVersion);
     responseHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-    final TimeResponse timeResponse;
-    if (apiVersion.equals("1.0.0")) {
-      timeResponse = new TimeResponseV100(LocalDateTime.now());
-    } else {
-      timeResponse = new TimeResponseV110(LocalDateTime.now());
-    }
-
+    final TimeResponse timeResponse = timeResponseBuilder.buildGetTimeResponse(apiVersion);
     return new ResponseEntity<>(timeResponse, responseHeaders, HttpStatus.OK);
   }
 }
